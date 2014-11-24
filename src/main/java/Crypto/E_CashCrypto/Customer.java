@@ -1,15 +1,17 @@
 package Crypto.E_CashCrypto;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.commons.lang.SerializationUtils;
 
 public class Customer {
-	static MoneyOrder[] moneyOrders = new MoneyOrder[51];
-	static IdentityString[] identityStrings = new IdentityString[51];
-	static BigInteger[] blindedMoneyOrders = new BigInteger[51];
+	static ArrayList<MoneyOrder> moneyOrders = new ArrayList<MoneyOrder>();
+	static ArrayList<IdentityString> identityStrings = new ArrayList<IdentityString>();
+	static ArrayList<BigInteger> blindedMoneyOrders = new ArrayList<BigInteger>()
+			;
 	public void getAmount(){
 		Customer customer = new Customer();
 		Scanner scanner = new Scanner(System.in);
@@ -41,7 +43,7 @@ public class Customer {
 		   MoneyOrder tempMoneyOrder = new MoneyOrder();
 		   tempMoneyOrder.setMoneyOrderAmount(value);
 		   tempMoneyOrder.setUniquenessString(generators.generateUniquenessString(25));
-		   moneyOrders[i] = tempMoneyOrder;
+		   moneyOrders.add(tempMoneyOrder);
 		   customer.generateNIdentityPairs(randomNumber, moneyOrder.getCustomerIdenity(), i);
 		   customer.blindMoneyOrders(tempMoneyOrder, i);
 		}
@@ -63,7 +65,7 @@ public class Customer {
 		
 		tempIdentityString.setLeftHalf(randomNumber);
 		tempIdentityString.setRightHalf(randomNumber ^ customerIdenity);
-		identityStrings[count] = tempIdentityString;
+		identityStrings.add(tempIdentityString);
 		
 		//System.out.println(identityStrings[count].getLeftHalf() ^ identityStrings[count].getRightHalf());
 	}
@@ -136,8 +138,8 @@ public class Customer {
 		BigInteger serializedMoneyOrderInt = new BigInteger(serializedMoneyOrder);
 		BigInteger random = new BigInteger("8");
 		
-		blindedMoneyOrders[count] = serializedMoneyOrderInt.multiply(random);
-		System.out.println(blindedMoneyOrders[count]);
+		blindedMoneyOrders.add(serializedMoneyOrderInt.multiply(random));
+		System.out.println(blindedMoneyOrders.get(count));
 	}
 	
 }

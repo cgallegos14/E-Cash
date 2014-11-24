@@ -7,19 +7,19 @@ import org.apache.commons.lang.SerializationUtils;
 
 public class Bank {
 	static ArrayList<BigInteger> unBlindedMoneyOrders = new ArrayList<BigInteger>();
-	//static byte[][] deserializeMoneyOrdersArray = new byte[51][];
 	static ArrayList<MoneyOrder> deserializeMoneyOrders = new ArrayList<MoneyOrder>();
 	
-	public void checkAllButOneBlindedMoneyOrders(BigInteger[] blindedMoneyOrders, BigInteger blindingFactor){
+	public void checkAllButOneBlindedMoneyOrders(ArrayList<BigInteger> blindedMoneyOrders, BigInteger blindingFactor){
 		Bank bank = new Bank();
 		bank.unBlindMoneyOrders(blindedMoneyOrders, blindingFactor);
 		bank.deserializeMoneyOrders();
+		System.out.println(bank.checkMoneyOrders());
 	}
 	
 	//TODO randomize moneyOrderChoosing
-	public void unBlindMoneyOrders(BigInteger[] blindedMoneyOrders, BigInteger blindingFactor){
-		for(int i = 0; i < 4; i++){
-			unBlindedMoneyOrders.add(blindedMoneyOrders[i].divide(blindingFactor));
+	public void unBlindMoneyOrders(ArrayList<BigInteger> blindedMoneyOrders, BigInteger blindingFactor){
+		for(BigInteger order : blindedMoneyOrders){
+			unBlindedMoneyOrders.add(order.divide(blindingFactor));
 		}
 			
 		//System.out.println(blindedMoneyOrders[0]);
@@ -38,5 +38,19 @@ public class Bank {
 		System.out.println(deserializeMoneyOrders.get(1));
 		System.out.println(deserializeMoneyOrders.get(2));
 		System.out.println(deserializeMoneyOrders.get(3));
+	}
+	
+	public boolean checkMoneyOrders(){
+		boolean areMoneyOrdersValid = true;
+		double amount = deserializeMoneyOrders.get(0).getMoneyOrderAmount();
+		long customerIdenity = deserializeMoneyOrders.get(0).getCustomerIdenity();
+		
+		for(MoneyOrder moneyOrders : deserializeMoneyOrders){
+			if(moneyOrders.getMoneyOrderAmount() != amount && moneyOrders.getCustomerIdenity() != customerIdenity){
+				return false;
+			}
+		}
+		
+		return areMoneyOrdersValid;
 	}
 }
