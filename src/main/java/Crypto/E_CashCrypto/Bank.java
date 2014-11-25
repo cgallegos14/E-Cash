@@ -115,7 +115,11 @@ public class Bank {
 		BitCommitment bitCommitment = new BitCommitment();
 		Bank bank = new Bank();
 		
+		System.out.println("Welcome to the Bank of Socorro");
+		System.out.println("You want a money order, ok lets check all but one for security");
+
 		if(bank.checkMoneyOrders() == true){
+			System.out.println("All looks good Here is your money order. Thank You!");
 			String randomBitString = generators.generateUniquenessString(20);
 			bitCommitment = customer.generateBitCommitment(randomBitString);
 			
@@ -132,6 +136,8 @@ public class Bank {
 	
 	public void retrieveMoneyOrderFromMerchant(SignedMoneyOrder signedMoneyOrder, long customerIdentitySection) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException{
 		Bank bank = new Bank();
+		RSAKeyGeneration bankPublicKeys = new RSAKeyGeneration();
+		bankPublicKeys.setPublicKey(bankKeys.getPublicKey());
 		System.out.println();
 		System.out.println("Hello, welcome to Bank of Socorro");
 		System.out.println("I see you have a money order, lets have a look");
@@ -147,7 +153,7 @@ public class Bank {
 				System.out.println("All checks out here is your money!");
 				storedInformation.get(0).setUniquenessString(signedMoneyOrder.getMoneyOrder().getUniquenessString());
 				storedInformation.get(0).setCustomerHalfIdentity(customerIdentitySection);
-				merchant.merchantTryToCheatBank(signedMoneyOrder, customerIdentitySection);
+				merchant.merchantTryToCheatBank(signedMoneyOrder, customerIdentitySection, bankPublicKeys);
 			}
 			else{
 				System.out.println("WE HAVE A PROBLEM!!!, please give us the customer Identity half");
@@ -157,6 +163,9 @@ public class Bank {
 				else{
 					System.out.println("It appears the customer used this money order twice.");
 					System.out.println("We will find out who it is now!");
+					
+					System.out.println("The thief is...");
+					System.out.println(storedInformation.get(0).getCustomerHalfIdentity() ^ customerIdentitySection);
 				}
 			}
 		}

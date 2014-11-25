@@ -174,8 +174,22 @@ public class Customer {
 		}
 	}
 	
-	public void tryToCheatUseMoneyOrderTwice(SignedMoneyOrder signedMoneyOrder){
+	public void tryToCheatUseMoneyOrderTwice(SignedMoneyOrder signedMoneyOrder, RSAKeyGeneration bankPublicKeys) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException{
+		Merchant merchant = new Merchant();
+		Scanner scanner = new Scanner(System.in);
+		int choice;
+		System.out.println();
+		System.out.println("Well the system looks stupid, Should I (customer) try to use the money Order again?");
+		System.out.print("1 for yes 2 for no ==> ");
 		
+		choice = scanner.nextInt();
+		
+		if(choice == 1){
+			merchant.retrieveMoneyOrder(signedMoneyOrder, identityStrings, bankPublicKeys);
+		}
+		else{
+			System.out.println("Nah not worth the jail time ^_^");
+		}
 	}
 	
 }
