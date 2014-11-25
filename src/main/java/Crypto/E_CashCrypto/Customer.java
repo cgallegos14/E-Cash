@@ -10,8 +10,9 @@ import org.apache.commons.lang.SerializationUtils;
 public class Customer {
 	static ArrayList<MoneyOrder> moneyOrders = new ArrayList<MoneyOrder>();
 	static ArrayList<IdentityString> identityStrings = new ArrayList<IdentityString>();
-	static ArrayList<BigInteger> blindedMoneyOrders = new ArrayList<BigInteger>()
-			;
+	static ArrayList<BigInteger> blindedMoneyOrders = new ArrayList<BigInteger>();
+	static int seed;
+	
 	public void getAmount(){
 		Customer customer = new Customer();
 		Scanner scanner = new Scanner(System.in);
@@ -52,8 +53,8 @@ public class Customer {
 		//System.out.println(moneyOrders[1].getUniquenessString());
 		//System.out.println(moneyOrders[2].getUniquenessString());
 		//System.out.println(generators.randomNumberGeneratorSeed(60));
-		bitCommitment = customer.generateBitCommitment();
-		customer.bitCommitmentReverser(bitCommitment);
+		//bitCommitment = customer.generateBitCommitment();
+		//customer.bitCommitmentReverser(bitCommitment);
 		
 		BigInteger blindingFactor = new BigInteger("8"); //TODO make this work by not recreating it
 		
@@ -70,15 +71,16 @@ public class Customer {
 		//System.out.println(identityStrings[count].getLeftHalf() ^ identityStrings[count].getRightHalf());
 	}
 	
-	public BitCommitment generateBitCommitment(){
+	public BitCommitment generateBitCommitment(String randomBitString){
 		BitCommitment bitCommitment = new BitCommitment();
 		Generators generators = new Generators();
 		
 		int randomSeed = 0;
 		Random random = new Random();
 		randomSeed = random.nextInt(250);
+		seed = randomSeed;
 		
-		bitCommitment.setRandomBitString(generators.generateUniquenessString(20));
+		bitCommitment.setRandomBitString(randomBitString);
 		bitCommitment.setSeed(randomSeed);
 		String bitCommitmentResult = bitCommitmentCalculator(bitCommitment.getRandomBitString(), randomSeed);
 		bitCommitment.setBitCommitmentResult(bitCommitmentResult);
@@ -140,6 +142,24 @@ public class Customer {
 		
 		blindedMoneyOrders.add(serializedMoneyOrderInt.multiply(random));
 		System.out.println(blindedMoneyOrders.get(count));
+	}
+	
+	public void getBackSignedMoneyOrder(SignedMoneyOrder signedMoneyOrder){
+		Customer customer = new Customer();
+		BigInteger unBlindedMoneyOrder;
+		BigInteger blindingFactor = new BigInteger("8");
+		unBlindedMoneyOrder = signedMoneyOrder.getBlindedMoneyOrder().divide(blindingFactor);
+		
+		byte[] moneyOrderBigIntToBitArray = unBlindedMoneyOrder.toByteArray();
+		MoneyOrder tempObject = (MoneyOrder) SerializationUtils.deserialize(moneyOrderBigIntToBitArray);
+		signedMoneyOrder.setMoneyOrder(tempObject);
+		
+		//System.out.println(signedMoneyOrder.getMoneyOrder().getMoneyOrderAmount());
+		customer.useMoneyOrder(signedMoneyOrder);
+	}
+	
+	public void useMoneyOrder(SignedMoneyOrder signedMoneyOrder){
+		
 	}
 	
 }
