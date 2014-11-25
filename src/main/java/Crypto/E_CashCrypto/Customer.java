@@ -10,6 +10,15 @@ import java.util.Scanner;
 
 import org.apache.commons.lang.SerializationUtils;
 
+/**
+ * This class allows a customer to great a Money order for a set amount
+ * Also the number of clone money orders can be changed at run time
+ * Clone money orders are used for the bank to verify the one blind money order they
+ * Don't UN-blind has a low chance of being different than the others
+ * This class also handles identity splitting and Bit Commitment Protocols
+ * Lastly allows the customer to try and cheat and use the money twice
+ */
+
 public class Customer {
 	static ArrayList<MoneyOrder> moneyOrders = new ArrayList<MoneyOrder>();
 	static ArrayList<IdentityString> identityStrings = new ArrayList<IdentityString>();

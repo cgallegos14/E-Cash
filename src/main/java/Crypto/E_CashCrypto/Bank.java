@@ -16,6 +16,16 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang.SerializationUtils;
 
+/**
+ * This class allows a bank to accept a money order from a customer/Merchant
+ * Also Uses the clone money orders to check for customer fraud. 
+ * Also Handles key generation, and stores needed information to 
+ * Insure money isn't used twice, and if used twice catches the
+ * Merchant or customer, depending on who cheated
+ * Returns a signed money order to the customer
+ * Gives the money to the merchant if all is well
+ */
+
 public class Bank {
 	static ArrayList<BigInteger> unBlindedMoneyOrders = new ArrayList<BigInteger>();
 	static ArrayList<MoneyOrder> deserializeMoneyOrders = new ArrayList<MoneyOrder>();

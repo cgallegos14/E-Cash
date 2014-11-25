@@ -8,6 +8,13 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * This class allows a merchant to accept a money order from a customer
+ * Checks to insure bank signature is valid. If so asks customer for
+ * One half of identity string and stores it to later give to the bank
+ * Provides an option for the merchant to try and cheat the bank
+ */
+
 public class Merchant {
 	public void retrieveMoneyOrder(SignedMoneyOrder signedMoneyOrder, ArrayList<IdentityString> identityStrings, RSAKeyGeneration bankPublicKeys) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException{
 		Merchant merchant = new Merchant();
