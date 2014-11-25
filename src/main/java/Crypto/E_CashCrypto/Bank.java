@@ -88,6 +88,7 @@ public class Bank {
 	
 	public void signMoneyOrder(ArrayList<BigInteger> blindedMoneyOrders) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, IOException{
 		SignedMoneyOrder signedMoneyOrder = new SignedMoneyOrder();
+		RSAKeyGeneration bankPublicKeys = new RSAKeyGeneration();
 		Bank bank = new Bank();
 		
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
@@ -96,6 +97,7 @@ public class Bank {
 		
 		bankKeys.setPrivateKey(privateKey);
 		bankKeys.setPublicKey(publicKey);
+		bankPublicKeys.setPublicKey(publicKey);
 		
 		Signature signingEngine = Signature.getInstance("SHA1withRSA");
 		SignedObject signedObject = new SignedObject(blindedMoneyOrders.get(0), privateKey, signingEngine);
@@ -103,10 +105,10 @@ public class Bank {
 		signedMoneyOrder.setBankSignedObject(signedObject);
 		signedMoneyOrder.setBlindedMoneyOrder(blindedMoneyOrders.get(0));
 				
-		bank.storeCustomerInfoAndReturnSignedMoneyOrder(signedMoneyOrder);
+		bank.storeCustomerInfoAndReturnSignedMoneyOrder(signedMoneyOrder, bankPublicKeys);
 	}
 	
-	public void storeCustomerInfoAndReturnSignedMoneyOrder(SignedMoneyOrder signedMoneyOrder){
+	public void storeCustomerInfoAndReturnSignedMoneyOrder(SignedMoneyOrder signedMoneyOrder, RSAKeyGeneration bankPublicKeys){
 		BankStoredInfomation tempInfo = new BankStoredInfomation();
 		Generators generators = new Generators();
 		Customer customer = new Customer();
@@ -121,10 +123,53 @@ public class Bank {
 			tempInfo.setBitCommitmentResult(bitCommitment.getBitCommitmentResult());
 			storedInformation.add(tempInfo);
 			
-			customer.getBackSignedMoneyOrder(signedMoneyOrder);
+			customer.getBackSignedMoneyOrder(signedMoneyOrder, bankPublicKeys);
 		}
 		else{
 			System.out.println("Your money orders were not valid! Police on the way!");
 		}
+	}
+	
+	public void retrieveMoneyOrderFromMerchant(SignedMoneyOrder signedMoneyOrder, long customerIdentitySection) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException{
+		Bank bank = new Bank();
+		System.out.println();
+		System.out.println("Hello, welcome to Bank of Socorro");
+		System.out.println("I see you have a money order, lets have a look");
+		System.out.println();
+		
+		Signature signingEngine = Signature.getInstance("SHA1withRSA");
+		boolean isSignatureValid = signedMoneyOrder.getBankSignedObject().verify(bankKeys.getPublicKey(), signingEngine);
+		
+		if(isSignatureValid == true){
+			System.out.println("That's our signature! Lets make sure it's not a duplicate");
+			if(bank.checkForDuplicateMoneyOrder(signedMoneyOrder) == false){
+				System.out.println("All checks out here is your money!");
+				storedInformation.get(0).setUniquenessString(signedMoneyOrder.getMoneyOrder().getUniquenessString());
+			}
+			else{
+				System.out.println("We have a problem, please give us the customer Identity half");
+			}
+		}
+		else{
+			System.out.println("Well... Sorry thats not our signature...");
+		}
+	}
+	
+	public boolean checkForDuplicateMoneyOrder(SignedMoneyOrder signedMoneyOrder){
+		boolean isMoneyOrderDuplicate = true;
+		
+		if(storedInformation.get(0).getUniquenessString() == null){
+			isMoneyOrderDuplicate = false;
+		}
+		
+		else{
+			for(int i = 0; i < storedInformation.size(); i++){
+				if(storedInformation.get(i).getUniquenessString() == signedMoneyOrder.getMoneyOrder().getUniquenessString()){
+					isMoneyOrderDuplicate = true;
+				}
+			}
+			isMoneyOrderDuplicate = false;
+		}
+		return isMoneyOrderDuplicate;
 	}
 }

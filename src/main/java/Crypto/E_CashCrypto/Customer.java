@@ -1,6 +1,9 @@
 package Crypto.E_CashCrypto;
 
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -32,9 +35,7 @@ public class Customer {
 		Customer customer = new Customer();
 		MoneyOrder moneyOrder = new MoneyOrder();
 		Bank bank = new Bank();
-		
-		BitCommitment bitCommitment = new BitCommitment();
-		
+				
 		Random random = new Random();
 		long randomNumber = 0;
 		int maxRandom = 25000;
@@ -73,7 +74,6 @@ public class Customer {
 	
 	public BitCommitment generateBitCommitment(String randomBitString){
 		BitCommitment bitCommitment = new BitCommitment();
-		Generators generators = new Generators();
 		
 		int randomSeed = 0;
 		Random random = new Random();
@@ -144,7 +144,7 @@ public class Customer {
 		System.out.println(blindedMoneyOrders.get(count));
 	}
 	
-	public void getBackSignedMoneyOrder(SignedMoneyOrder signedMoneyOrder){
+	public void getBackSignedMoneyOrder(SignedMoneyOrder signedMoneyOrder, RSAKeyGeneration bankPublicKeys){
 		Customer customer = new Customer();
 		BigInteger unBlindedMoneyOrder;
 		BigInteger blindingFactor = new BigInteger("8");
@@ -155,11 +155,23 @@ public class Customer {
 		signedMoneyOrder.setMoneyOrder(tempObject);
 		
 		//System.out.println(signedMoneyOrder.getMoneyOrder().getMoneyOrderAmount());
-		customer.useMoneyOrder(signedMoneyOrder);
+		customer.useMoneyOrder(signedMoneyOrder, bankPublicKeys);
 	}
 	
-	public void useMoneyOrder(SignedMoneyOrder signedMoneyOrder){
-		
+	public void useMoneyOrder(SignedMoneyOrder signedMoneyOrder, RSAKeyGeneration bankPublicKeys){
+		Merchant merchant = new Merchant();
+		try {
+			merchant.retrieveMoneyOrder(signedMoneyOrder, identityStrings, bankPublicKeys);
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }
