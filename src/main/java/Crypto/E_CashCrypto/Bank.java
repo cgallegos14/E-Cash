@@ -143,33 +143,57 @@ public class Bank {
 		if(isSignatureValid == true){
 			System.out.println("That's our signature! Lets make sure it's not a duplicate");
 			if(bank.checkForDuplicateMoneyOrder(signedMoneyOrder) == false){
+				Merchant merchant = new Merchant();
 				System.out.println("All checks out here is your money!");
 				storedInformation.get(0).setUniquenessString(signedMoneyOrder.getMoneyOrder().getUniquenessString());
+				storedInformation.get(0).setCustomerHalfIdentity(customerIdentitySection);
+				merchant.merchantTryToCheatBank(signedMoneyOrder, customerIdentitySection);
 			}
 			else{
-				System.out.println("We have a problem, please give us the customer Identity half");
+				System.out.println("WE HAVE A PROBLEM!!!, please give us the customer Identity half");
+				if(bank.checkIfMerchantCheated(signedMoneyOrder, customerIdentitySection) == true){
+					System.out.println("BAD MOVE, you already have cashed this. Guard Take him away!");
+				}
+				else{
+					System.out.println("It appears the customer used this money order twice.");
+					System.out.println("We will find out who it is now!");
+				}
 			}
 		}
 		else{
-			System.out.println("Well... Sorry thats not our signature...");
+			System.out.println("Well... Sorry that's not our signature...");
 		}
 	}
 	
 	public boolean checkForDuplicateMoneyOrder(SignedMoneyOrder signedMoneyOrder){
-		boolean isMoneyOrderDuplicate = true;
+		boolean isMoneyOrderDuplicate = false;
 		
 		if(storedInformation.get(0).getUniquenessString() == null){
 			isMoneyOrderDuplicate = false;
+			return isMoneyOrderDuplicate;
 		}
 		
 		else{
 			for(int i = 0; i < storedInformation.size(); i++){
 				if(storedInformation.get(i).getUniquenessString() == signedMoneyOrder.getMoneyOrder().getUniquenessString()){
 					isMoneyOrderDuplicate = true;
+					return isMoneyOrderDuplicate;
 				}
 			}
-			isMoneyOrderDuplicate = false;
 		}
 		return isMoneyOrderDuplicate;
+	}
+	
+	public boolean checkIfMerchantCheated(SignedMoneyOrder signedMoneyOrder, long customerIdentitySection){
+		boolean isMerchantACheater = true;
+		
+		if(storedInformation.get(0).getCustomerHalfIdentity() == customerIdentitySection){
+			isMerchantACheater = true;
+			return isMerchantACheater;
+		}
+		else{
+			isMerchantACheater = false;
+			return isMerchantACheater;
+		}
 	}
 }

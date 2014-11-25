@@ -4,6 +4,7 @@ public class BankStoredInfomation {
 	private long customerIdentity;
 	private String uniquenessString;
 	private String bitCommitmentResult;
+	private long customerHalfIdentity;
 	
 	public long getCustomerIdentity() {
 		return customerIdentity;
@@ -22,5 +23,11 @@ public class BankStoredInfomation {
 	}
 	public void setBitCommitmentResult(String bitCommitmentResult) {
 		this.bitCommitmentResult = bitCommitmentResult;
+	}
+	public long getCustomerHalfIdentity() {
+		return customerHalfIdentity;
+	}
+	public void setCustomerHalfIdentity(long customerHalfIdentity) {
+		this.customerHalfIdentity = customerHalfIdentity;
 	}
 }

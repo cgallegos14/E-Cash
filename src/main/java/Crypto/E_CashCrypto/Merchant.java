@@ -77,4 +77,22 @@ public class Merchant {
 		bank.retrieveMoneyOrderFromMerchant(signedMoneyOrder, customerIdentitySection);
 	}
 	
+	public void merchantTryToCheatBank(SignedMoneyOrder signedMoneyOrder, long customerIdentitySection) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException{
+		Bank bank = new Bank();
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println();
+		System.out.println("Well times have been rough.. No one wants to buy expensive tacos...");
+		System.out.println("Should I attempt to cash the money order again?");
+		System.out.print("1 for yes 2 for no ==> ");
+		int choice = scanner.nextInt();
+		
+		if(choice == 1){
+			bank.retrieveMoneyOrderFromMerchant(signedMoneyOrder, customerIdentitySection);
+		}
+		else{
+			System.out.println("Better to be a good person");
+		}
+	}
+	
 }
