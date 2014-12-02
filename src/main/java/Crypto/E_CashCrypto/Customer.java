@@ -24,6 +24,7 @@ public class Customer {
 	static ArrayList<IdentityString> identityStrings = new ArrayList<IdentityString>();
 	static ArrayList<BigInteger> blindedMoneyOrders = new ArrayList<BigInteger>();
 	static int seed;
+	static BigInteger randomBigInt;
 	
 	public void getAmount(){
 		Customer customer = new Customer();
@@ -49,6 +50,9 @@ public class Customer {
 		long randomNumber = 0;
 		int maxRandom = 25000;
 		randomNumber = (long) random.nextInt(maxRandom);
+		Integer temp = random.nextInt(15);
+		randomBigInt = BigInteger.valueOf(temp.intValue());
+		
 		
 		for(int i = 0; i < numberOfCloneMoneyOrders; i++) {
 		   MoneyOrder tempMoneyOrder = new MoneyOrder();
@@ -66,7 +70,7 @@ public class Customer {
 		//bitCommitment = customer.generateBitCommitment();
 		//customer.bitCommitmentReverser(bitCommitment);
 		
-		BigInteger blindingFactor = new BigInteger("8"); //TODO make this work by not recreating it
+		BigInteger blindingFactor = randomBigInt; //TODO make this work by not recreating it
 		
 		bank.checkAllButOneBlindedMoneyOrders(blindedMoneyOrders, blindingFactor);
 	}
@@ -94,9 +98,9 @@ public class Customer {
 		String bitCommitmentResult = bitCommitmentCalculator(bitCommitment.getRandomBitString(), randomSeed);
 		bitCommitment.setBitCommitmentResult(bitCommitmentResult);
 		
-		System.out.println(bitCommitment.getRandomBitString());
-		System.out.println(bitCommitment.getSeed());
-		System.out.println(bitCommitment.getBitCommitmentResult());
+		//System.out.println(bitCommitment.getRandomBitString());
+		//System.out.println(bitCommitment.getSeed());
+		//System.out.println(bitCommitment.getBitCommitmentResult());
 		
 		return bitCommitment;
 	}
@@ -119,7 +123,7 @@ public class Customer {
 			}
 		}
 		
-		System.out.println("This is psuedoR ==> " + psuedoRandomNumberFromSeedString);
+		//System.out.println("This is psuedoR ==> " + psuedoRandomNumberFromSeedString);
 		return bitCommitmentString;
 	}
 	
@@ -147,16 +151,15 @@ public class Customer {
 	public void blindMoneyOrders(MoneyOrder moneyOrder, int count){
 		byte[] serializedMoneyOrder = SerializationUtils.serialize(moneyOrder);
 		BigInteger serializedMoneyOrderInt = new BigInteger(serializedMoneyOrder);
-		BigInteger random = new BigInteger("8");
 		
-		blindedMoneyOrders.add(serializedMoneyOrderInt.multiply(random));
+		blindedMoneyOrders.add(serializedMoneyOrderInt.multiply(randomBigInt));
 		System.out.println(blindedMoneyOrders.get(count));
 	}
 	
 	public void getBackSignedMoneyOrder(SignedMoneyOrder signedMoneyOrder, RSAKeyGeneration bankPublicKeys){
 		Customer customer = new Customer();
 		BigInteger unBlindedMoneyOrder;
-		BigInteger blindingFactor = new BigInteger("8");
+		BigInteger blindingFactor = randomBigInt;
 		unBlindedMoneyOrder = signedMoneyOrder.getBlindedMoneyOrder().divide(blindingFactor);
 		
 		byte[] moneyOrderBigIntToBitArray = unBlindedMoneyOrder.toByteArray();

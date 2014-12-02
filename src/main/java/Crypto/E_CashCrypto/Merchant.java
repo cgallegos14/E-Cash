@@ -16,6 +16,7 @@ import java.util.Scanner;
  */
 
 public class Merchant {
+	static int test = -1;
 	public void retrieveMoneyOrder(SignedMoneyOrder signedMoneyOrder, ArrayList<IdentityString> identityStrings, RSAKeyGeneration bankPublicKeys) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException{
 		Merchant merchant = new Merchant();
 		int choice;
@@ -30,15 +31,17 @@ public class Merchant {
 		if(choice == 1){
 			int randomNIdentityString = 0;
 			int randomSide = 0;
+			test++;
 			Random random = new Random();
 			randomNIdentityString = random.nextInt(identityStrings.size());
 			randomSide = random.nextInt(2);
+			
 			System.out.println();
 			System.out.println("Great!, please show me " + randomNIdentityString + " of your IdentityList");
 			System.out.println("And the " + randomSide + " side");
 			
 			if(merchant.checkSignatureAuthenticity(bankPublicKeys, signedMoneyOrder) == true){
-				if(randomSide == 1){
+				if(test == 1){
 					System.out.println();
 					System.out.println("Sure it here it is!");
 					customerIdentitySection = identityStrings.get(randomNIdentityString).getRightHalf();
